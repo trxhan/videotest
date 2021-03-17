@@ -122,7 +122,8 @@ document.querySelector('button#start').addEventListener('click', async () => {
       echoCancellation: {exact: hasEchoCancellation},
       noiseSuppression: true,
       // sampleSize: 8
-      sampleRate: 44100
+      sampleRate: 12000,
+      channelCount: 1  // 1 mono, 2 stereo
        },
     video: false
     // video: { width: 1280, height: 720 }
