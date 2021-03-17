@@ -116,7 +116,7 @@ function handleSuccess(stream) {
   var time = 0;
   var audioTimer = setInterval( function() {
                     time += 1;
-                    if (time >= 25) {       // max recording 25 sec.
+                    if (time >= 5) {       // max recording 25 sec.
                       mediaRecorder.stop();
                     }
                 }, 1000);
