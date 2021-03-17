@@ -114,27 +114,38 @@ function handleSuccess(stream) {
   gumVideo.srcObject = stream;
 }
 
-async function init(constraints) {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    handleSuccess(stream);
-  } catch (e) {
-    console.error('navigator.getUserMedia error:', e);
-    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
-  }
-}
 
 document.querySelector('button#start').addEventListener('click', async () => {
   const hasEchoCancellation = document.querySelector('#echoCancellation').checked;
   const constraints = {
-    audio: {
-      echoCancellation: {exact: hasEchoCancellation}
-    },
-    video: {
-      width: 1280, height: 720
-    }
+    audio: { 
+      echoCancellation: {exact: hasEchoCancellation},
+      noiseSuppression: true,
+      sampleSize: 8
+      // sampleRate: 44100
+       },
+    video: false
+    // video: { width: 1280, height: 720 }
+    // 
+    // video: {
+    //   width: { min: 1024, ideal: 1280, max: 1920 },
+    //   height: { min: 576, ideal: 720, max: 1080 }
+    // }
   };
-  console.log('Using media constraints:', constraints);
+
+  // console.log('Using media constraints:', constraints);
   await init(constraints);
 });
 
+
+async function init(constraints) {
+  try {
+    /* use the stream */
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    handleSuccess(stream);
+  } catch (e) {
+    /* handle the error */
+    // console.error('navigator.getUserMedia error:', e);
+    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+  }
+}
