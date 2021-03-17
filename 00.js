@@ -7,8 +7,6 @@
 *  tree.
 */
 
-// This code is adapted from
-// https://rawgit.com/Miguelao/demos/master/mediarecorder.html
 
 'use strict';
 
@@ -17,21 +15,25 @@
 let mediaRecorder;
 let recordedBlobs;
 
-const errorMsgElement = document.querySelector('span#errorMsg');
-const recordedVideo = document.querySelector('video#recorded');
+
+
+// 녹음 버튼에 클릭 이벤트 설정
 const recordButton = document.querySelector('button#record');
 recordButton.addEventListener('click', () => {
   if (recordButton.textContent === 'Start Recording') {
     startRecording();
   } else {
-    stopRecording();
+    stopRecording();    
     recordButton.textContent = 'Start Recording';
     playButton.disabled = false;
     downloadButton.disabled = false;
   }
 });
 
+
+// 재생 버튼에 클릭 이벤트 설정
 const playButton = document.querySelector('button#play');
+const recordedVideo = document.querySelector('video#recorded');
 playButton.addEventListener('click', () => {
   const superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
   recordedVideo.src = null;
@@ -41,6 +43,8 @@ playButton.addEventListener('click', () => {
   recordedVideo.play();
 });
 
+
+// 다운로드 버튼에 클릭 이벤트 설정
 const downloadButton = document.querySelector('button#download');
 downloadButton.addEventListener('click', () => {
   const blob = new Blob(recordedBlobs, {type: 'video/webm'});
@@ -57,6 +61,9 @@ downloadButton.addEventListener('click', () => {
   }, 100);
 });
 
+
+
+
 function handleDataAvailable(event) {
   console.log('handleDataAvailable', event);
   if (event.data && event.data.size > 0) {
@@ -64,8 +71,12 @@ function handleDataAvailable(event) {
   }
 }
 
+
+
 function startRecording() {
+
   recordedBlobs = [];
+
   let options = {mimeType: 'video/webm;codecs=vp9,opus'};
   if (!MediaRecorder.isTypeSupported(options.mimeType)) {
     console.error(`${options.mimeType} is not supported`);
@@ -82,13 +93,21 @@ function startRecording() {
 
   try {
     mediaRecorder = new MediaRecorder(window.stream, options);
+    
+    
+    msg3Element.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(e)}`;
+
   } catch (e) {
     console.error('Exception while creating MediaRecorder:', e);
     errorMsgElement.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(e)}`;
     return;
   }
 
+
+
+
   console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
+
   recordButton.textContent = 'Stop Recording';
   playButton.disabled = true;
   downloadButton.disabled = true;
@@ -101,17 +120,21 @@ function startRecording() {
   console.log('MediaRecorder started', mediaRecorder);
 }
 
+
+
 function stopRecording() {
   mediaRecorder.stop();
 }
+
+
 
 function handleSuccess(stream) {
   recordButton.disabled = false;
   console.log('getUserMedia() got stream:', stream);
   window.stream = stream;
 
-  const gumVideo = document.querySelector('video#gum');
-  gumVideo.srcObject = stream;
+  const screen1 = document.querySelector('video#screen1');
+  screen1.srcObject = stream;
 
 }
 
