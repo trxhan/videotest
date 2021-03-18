@@ -12,10 +12,11 @@
 
 /* globals MediaRecorder */
 
-
+let mediaRecorder;
+let recordedBlobs;
 
 function handleDataAvailable(event) {
-  console.log('**** handleDataAvailable ****', event);
+  console.log('handleDataAvailable', event);
   if (event.data && event.data.size > 0) {
     recordedBlobs.push(event.data);
   }
@@ -44,7 +45,7 @@ recordButton.addEventListener('click', () => {
 // 재생 버튼에 클릭 이벤트 설정
 const playButton = document.querySelector('button#play');
 const recordedVideo = document.querySelector('video#recorded');
-let recordedBlobs;
+
 playButton.addEventListener('click', () => {
   const superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
   recordedVideo.src = null;
@@ -76,7 +77,6 @@ downloadButton.addEventListener('click', () => {
 
 
 
-let mediaRecorder;
 
 function startRecording() {
 
