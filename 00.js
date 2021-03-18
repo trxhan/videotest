@@ -125,7 +125,7 @@ function startRecording() {
     recordButton.textContent = 'Start Recording';
     playButton.disabled = false;
     downloadButton.disabled = false;
-  }, 7000);
+  }, 10000);
 
   
   // 이 stop 이벤트는  MediaRecorder.stop()메서드 호출되거나, 또는 캡처중인 미디어 스트림이 종료 될 때 발생한다.
