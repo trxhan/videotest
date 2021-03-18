@@ -136,19 +136,6 @@ function handleSuccess(stream) {
 
 
 
-async function init(constraints) {
-  try {
-    /* use the stream */
-    const stream = await navigator.getUserMedia(constraints);
-    // const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    handleSuccess(stream);
-  } catch (e) {
-    /* handle the error */
-    // console.error('navigator.getUserMedia error:', e);
-    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
-  }
-}
-
 
 
 document.querySelector('button#start').addEventListener('click', async () => {
@@ -173,4 +160,19 @@ document.querySelector('button#start').addEventListener('click', async () => {
   // console.log('Using media constraints:', constraints);
   await init(constraints);
 });
+
+
+
+async function init(constraints) {
+  try {
+    /* use the stream */
+    const stream = await navigator.getUserMedia(constraints);
+    // const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    handleSuccess(stream);
+  } catch (e) {
+    /* handle the error */
+    // console.error('navigator.getUserMedia error:', e);
+    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+  }
+}
 
