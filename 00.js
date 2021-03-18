@@ -12,9 +12,18 @@
 
 /* globals MediaRecorder */
 
-let mediaRecorder;
-let recordedBlobs;
 
+
+function handleDataAvailable(event) {
+  console.log('**** handleDataAvailable ****', event);
+  if (event.data && event.data.size > 0) {
+    recordedBlobs.push(event.data);
+  }
+}
+
+function stopRecording() {
+  mediaRecorder.stop();
+}
 
 
 // 녹음 버튼에 클릭 이벤트 설정
@@ -31,9 +40,11 @@ recordButton.addEventListener('click', () => {
 });
 
 
+
 // 재생 버튼에 클릭 이벤트 설정
 const playButton = document.querySelector('button#play');
 const recordedVideo = document.querySelector('video#recorded');
+let recordedBlobs;
 playButton.addEventListener('click', () => {
   const superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
   recordedVideo.src = null;
@@ -42,6 +53,7 @@ playButton.addEventListener('click', () => {
   recordedVideo.controls = true;
   recordedVideo.play();
 });
+
 
 
 // 다운로드 버튼에 클릭 이벤트 설정
@@ -64,28 +76,21 @@ downloadButton.addEventListener('click', () => {
 
 
 
-function handleDataAvailable(event) {
-  console.log('handleDataAvailable', event);
-  if (event.data && event.data.size > 0) {
-    recordedBlobs.push(event.data);
-  }
-}
-
-
+let mediaRecorder;
 
 function startRecording() {
 
   recordedBlobs = [];
 
-  let options = {mimeType: 'video/webm;codecs=vp9,opus'};
+  let options = {mimeType: 'video/webm;codecs=vp19,opus'};
   if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-    console.error(`${options.mimeType} is not supported`);
-    options = {mimeType: 'video/webm;codecs=vp8,opus'};
+    console.error(`${options.mimeType} 지원안해is not supported`);
+    options = {mimeType: 'video/webm;codecs=vp18,opus'};
     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      console.error(`${options.mimeType} is not supported`);
+      console.error(`${options.mimeType} 지원안해 is not supported`);
       options = {mimeType: 'video/webm'};
       if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        console.error(`${options.mimeType} is not supported`);
+        console.error(`${options.mimeType} 지원안해 is not supported`);
         options = {mimeType: ''};
       }
     }
@@ -93,38 +98,29 @@ function startRecording() {
 
   try {
     mediaRecorder = new MediaRecorder(window.stream, options);
-    
-    
-    msg3Element.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(e)}`;
-
   } catch (e) {
     console.error('Exception while creating MediaRecorder:', e);
     errorMsgElement.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(e)}`;
     return;
   }
 
-
-
-
   console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
 
   recordButton.textContent = 'Stop Recording';
   playButton.disabled = true;
   downloadButton.disabled = true;
+
   mediaRecorder.onstop = (event) => {
     console.log('Recorder stopped: ', event);
     console.log('Recorded Blobs: ', recordedBlobs);
   };
+
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.start();
   console.log('MediaRecorder started', mediaRecorder);
 }
 
 
-
-function stopRecording() {
-  mediaRecorder.stop();
-}
 
 
 
@@ -133,10 +129,26 @@ function handleSuccess(stream) {
   console.log('getUserMedia() got stream:', stream);
   window.stream = stream;
 
-  const screen1 = document.querySelector('video#screen1');
-  screen1.srcObject = stream;
+  const gum = document.querySelector('video#gumVideo');
+  gum.srcObject = stream;
 
 }
+
+
+
+async function init(constraints) {
+  try {
+    /* use the stream */
+    const stream = await navigator.getUserMedia(constraints);
+    // const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    handleSuccess(stream);
+  } catch (e) {
+    /* handle the error */
+    // console.error('navigator.getUserMedia error:', e);
+    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+  }
+}
+
 
 
 document.querySelector('button#start').addEventListener('click', async () => {
@@ -149,8 +161,8 @@ document.querySelector('button#start').addEventListener('click', async () => {
       sampleRate: 11025, // 8000, 11025, 22050, 44100
       channelCount: 1  // 1 mono, 2 stereo
       },
-    video: false
-    // video: { width: 1280, height: 720 }
+    // video: false
+    video: { width: 1280, height: 720 }
     // 
     // video: {
     //   width: { min: 1024, ideal: 1280, max: 1920 },
@@ -161,17 +173,4 @@ document.querySelector('button#start').addEventListener('click', async () => {
   // console.log('Using media constraints:', constraints);
   await init(constraints);
 });
-
-
-async function init(constraints) {
-  try {
-    /* use the stream */
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    handleSuccess(stream);
-  } catch (e) {
-    /* handle the error */
-    // console.error('navigator.getUserMedia error:', e);
-    errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
-  }
-}
 
