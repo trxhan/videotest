@@ -136,7 +136,6 @@ function startRecording() {
 
   console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
 
-
   recordButton.textContent = 'Stop Recording';
   playButton.disabled = true;
   downloadButton.disabled = true;
@@ -205,6 +204,9 @@ document.querySelector('button#start').addEventListener('click', async () => {
 
   try {
     recordButton.disabled = false;  // 녹화버튼이 비활성 상태라 클릭안되던거를, 클릭가능한상태로  활성화 한다
+
+    let aa1 = window.navigator.hardwareConcurrency; // navigator 어떻게 쓰는지 보려고..
+    console.log(`프로세서 코어 숫자는 `,aa1,`개`);   // hardwareConcurrency는 코어 숫자 반환하는거..
 
     //-------------------------------------------------------------------------
     // 아주 아래쪽에 설명한 MediaDevices.getUserMedia() 사용법을 봐라.
