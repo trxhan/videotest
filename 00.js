@@ -8,14 +8,15 @@
 
 
 // 이 프로그램의 가장 큰 목표는 window.stream 을  media recorder 로 받아서, 
-// 녹음 중지하면 그때까지의 내용을 blobs에 넣고, 그것을 recordedBlobs 에 넣는거다.
+// 녹음 중지하면 그때까지의 내용을 Blobs에 넣고, 그것을 recordedBlobs 에 넣는거다.
 // 그것을 가지고 재생하고, 다운로드 한다
 
 
 
 'use strict';
 
-let mediaRecorder;    // 이거는 mediaRecorder = new MediaRecorder(window.stream, options); 로 정의되서 사용될거다.
+let mediaRecorder;  // 이거는 startRecording();에서, 실행될거다. 
+                    // mediaRecorder = new MediaRecorder(window.stream, options); 로 정의되서 사용될거다.
 
 let recordedBlobs;
 
@@ -34,7 +35,10 @@ recordButton.addEventListener('click', () => {
   if (recordButton.textContent === 'Start Recording') {
     startRecording();
   } else {
-    mediaRecorder.stop();
+    setTimeout(() => {     // 버튼이  start Recording 이 아니면. 즉 stop recording이면,
+      mediaRecorder.stop();  // 버튼 클릭 후, 0.5초 뒤에 녹음정지. (진짜 누르자마자 stop 이면, 마지막이 약간 짤리는 느낌이라서)
+    }, 500);
+    // 하지만, 아래 내용은 0.5초 뒤가 아니고, 그냥 실행. 화면 표시되는 내용들.
     recordButton.textContent = 'Start Recording';
     playButton.disabled = false;
     downloadButton.disabled = false;
@@ -46,14 +50,30 @@ recordButton.addEventListener('click', () => {
 // 재생 버튼에 클릭 이벤트 설정 
 const playButton = document.querySelector('button#play');
 const video2 = document.querySelector('video#video2');
+
 playButton.addEventListener('click', () => {
-  const superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});  // recordedBlobs 를 버퍼에 넣는다.
-  video2.src = null;
-  video2.srcObject = null;
-  video2.src = window.URL.createObjectURL(superBuffer);
+  const blob = new Blob(recordedBlobs, {type: 'video/webm'}); // recordedBlobs 를 버퍼에 넣는다.
+  const url = window.URL.createObjectURL(blob);  // 객체를 가리키는 URL을 DOMString으로 반환한다.
+  console.log(`blob객체의 url이 만들어졌다. ${url}`);
+
+  video2.src = null;  
+  // video2.srcObject = null;
+  video2.src = url;
   video2.controls = true;
   video2.play();
+
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);   //  취소(revoke)한다
+    console.log(`blob객체의 url 이 지워졌다.`, url);
+  }, 100);
+
 });
+
+
+// URL.revokeObjectURL();
+// URL.revokeObjectURL(objectURL);
+
+
 
 
 
@@ -61,7 +81,8 @@ playButton.addEventListener('click', () => {
 const downloadButton = document.querySelector('button#download');
 downloadButton.addEventListener('click', () => {
   const blob = new Blob(recordedBlobs, {type: 'video/webm'});  // recordedBlobs 를 버퍼에 넣는다
-  const url = window.URL.createObjectURL(blob);                // 버퍼에 있는거를 파일로 만든다
+  const url = window.URL.createObjectURL(blob);   // 버퍼에 있는 blob 객체의 url 을 DOMString으로 반환한다.
+  console.log(`blob객체의 url이 만들어졌다. ${url}`);
 
   const a = document.createElement('a');  // a 요소 만든다
   a.style.display = 'none';               // a 요소의 스타일 설정
@@ -71,10 +92,13 @@ downloadButton.addEventListener('click', () => {
   a.click();                              // a 요소를 클릭한다
 
   setTimeout(() => {
-    document.body.removeChild(a);      //  삭제(remove)한다
-    window.URL.revokeObjectURL(url);   //  취소(revoke)한다
+    document.body.removeChild(a);         //  삭제(remove)한다
+    window.URL.revokeObjectURL(url);      //  취소(revoke)한다
+    console.log(`blob객체의 url 이 지워졌다.`, url);
   }, 100);
+
 });
+
 
 
 
@@ -85,10 +109,10 @@ function startRecording() {
   recordedBlobs = [];
   
   // mimeType 을 설정한다
-  let options = {mimeType: 'video/webm;codecs=vp19,opus'};
+  let options = {mimeType: 'video/webm;codecs=vp9,opus'};
   if (!MediaRecorder.isTypeSupported(options.mimeType)) {
     console.error(`${options.mimeType} is not supported`);
-    options = {mimeType: 'video/webm;codecs=vp18,opus'};
+    options = {mimeType: 'video/webm;codecs=vp8,opus'};
     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
       console.error(`${options.mimeType} is not supported`);
       options = {mimeType: 'video/webm'};
@@ -121,12 +145,18 @@ function startRecording() {
   console.log('MediaRecorder started', mediaRecorder);
 
   setTimeout(() => {     // 녹음이 최대길이 설정.  몇초뒤 중지되도록 설정. mediaRecorder.onstop 이벤트가 발생한다.
-    mediaRecorder.stop();
-    recordButton.textContent = 'Start Recording';
-    playButton.disabled = false;
-    downloadButton.disabled = false;
+    if (recordButton.textContent === 'Start Recording') {
+      console.log('정해진 최대 녹음시간 이전에 이미 정지되었음');
+    } else {
+      mediaRecorder.stop();
+      recordButton.textContent = 'Start Recording';
+      playButton.disabled = false;
+      downloadButton.disabled = false;
+    }
   }, 10000);
-
+    
+  
+  
   
   // 이 stop 이벤트는  MediaRecorder.stop()메서드 호출되거나, 또는 캡처중인 미디어 스트림이 종료 될 때 발생한다.
   // 각각의 경우에, Blob 이 해당 지점까지 캡처하게하면서 dataavailable event 가 발생한 후,  stop 이벤트가 발생한다.
@@ -152,8 +182,8 @@ document.querySelector('button#start').addEventListener('click', async () => {
     audio: { 
       echoCancellation: {exact: hasEchoCancellation},
       noiseSuppression: true,
-      sampleSize: 16,
-      sampleRate: 22050, // 8000, 11025, 22050, 44100
+      sampleSize: 8,
+      sampleRate: 1000, // 8000, 11025, 22050, 44100
       channelCount: 1  // 1 mono, 2 stereo
       },
     // video: false
@@ -171,7 +201,7 @@ document.querySelector('button#start').addEventListener('click', async () => {
 
 
 
-async function getMedia(constraints) {
+ async function getMedia(constraints) {
 
   try {
     recordButton.disabled = false;  // 녹화버튼이 비활성 상태라 클릭안되던거를, 클릭가능한상태로  활성화 한다
@@ -190,7 +220,7 @@ async function getMedia(constraints) {
     const video1 = document.querySelector('video#video1'); // 브라우저에서 video 가 들어갈 부분을 선택해서.
     if ('srcObject' in video1) {
       video1.srcObject = stream;
-      // MediaStream 을 비디오가 들어갈 부분에 srcObject 에 다이렉트로 set 헀다
+      // MediaStream 을 비디오1 이 들어갈 부분에 srcObject 에 다이렉트로 set 헀다
       // srcObject 는  MediaStream, MediaSource, Blob 또는 File 객체를 값으로 받는다
     } else {
       // Avoid using this in new browsers, as it is going away.
@@ -203,6 +233,7 @@ async function getMedia(constraints) {
     errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
   }
 }
+
 
 
 

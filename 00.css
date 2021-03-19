@@ -5,33 +5,129 @@
  *  that can be found in the LICENSE file in the root of the source
  *  tree.
  */
- button {
-    margin: 0 3px 10px 0;
-    padding-left: 2px;
-    padding-right: 2px;
-    width: 99px;
+
+* {margin: 0;} 
+
+  @media screen and (min-width: 1000px) {
+    /* hack! to detect non-touch devices */
+    div#links a {
+      line-height: .8em;
+    }
   }
   
-  button:last-of-type {
+  body {
     margin: 0;
+    padding: 1em;
   }
-  
-  p.borderBelow {
-    margin: 0 0 20px 0;
-    padding: 0 0 20px 0;
+ 
+  audio {
+    max-width: 100%;
   }
-  
+ 
   video {
-    vertical-align: top;
-    --width: 25vw;
+    border-style: solid;
+    border-color: #222;
+    border-width: 2px;
+    background: #888;
+
+    --width: 48%;
     width: var(--width);
-    height: calc(var(--width) * 0.5625);
+    height: calc(var(--width) * 0.15);
+  }
+      
+
+  div#aaa {
+    border-style: dotted;
+    border-color: #1D6EEE;
+    border-width: 1px;
+
+    width: 100%;
+    padding:1em 2px 1em 2px;
+  }
+
+   
+  button {
+    width: 8.5em;
+    background-color: #d84a38;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    font-family: arial, sans-serif;
+    font-size: 0.6em;
+    margin: 0 0 0.3em 0;
+    padding: 0.6em;
   }
   
-  video:last-of-type {
-    margin: 0 0 20px 0;
+  button:active {
+    background-color: #cf402f;
   }
   
-  video#gumVideo {
-    margin: 0 20px 20px 0;
+  button:hover {
+    background-color: #cf402f;
   }
+  
+  button[disabled] {
+    color: #ccc;
+  }
+  
+  button[disabled]:hover {
+    background-color: #d84a38;
+  }
+  
+  a {
+    color: #1D6EEE;
+    font-weight: 300;
+    text-decoration: none;
+  }
+
+  h1 {
+    font-size: 25px;
+    margin-bottom: 1em;
+  }
+
+  h4 {
+    font-size: 15px;
+    margin-top: 1em;
+  }
+
+  p {
+    font-size: 15px;
+  }
+
+
+
+
+  @media screen and (max-width: 650px) {
+ 
+    h1 {
+      font-size: 25px;
+    }
+    
+    h4 {
+      font-size: 12px;
+      margin-top: 1em;
+    }
+
+    p {
+      font-size: 12px;
+    }
+
+  }
+  
+  @media screen and (max-width: 550px) {
+    h1 {
+      font-size: 22px;
+    }
+  }
+  
+  @media screen and (max-width: 450px) {
+    h1 {
+      font-size: 20px;
+    }
+    
+    h4 {
+      font-size: 12px;
+      margin-top: 1em;
+    }
+  }
+  

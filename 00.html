@@ -7,15 +7,16 @@
  *  that can be found in the LICENSE file in the root of the source
  *  tree.
 -->
+
 <html>
 <head>
 
     <meta charset="utf-8">
     <meta name="description" content="WebRTC code samples">
     <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
-    <meta itemprop="description" content="Client-side WebRTC code samples">
-    <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png">
-    <meta itemprop="name" content="WebRTC code samples">
+    <!-- <meta itemprop="description" content="Client-side WebRTC code samples"> -->
+    <!-- <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png"> -->
+    <!-- <meta itemprop="name" content="WebRTC code samples"> -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta id="theme-color" name="theme-color" content="#ffffff">
 
@@ -23,26 +24,25 @@
 
     <title>MediaStream Recording</title>
 
-    <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
-    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="00css.css">
+    <!-- <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css"> -->
     <link rel="stylesheet" href="00.css">
 
 </head>
 
 <body>
 
-<div id="container">
+<div>
 
     <h1>문장 읽기</h1>
 
     <p style="color:#0c59e9;">아래 문장을 읽어주세요. 녹음은 최대 10초 가능합니다.</p>
     <p><b> "연준, 물가 상승 우려에도 금리 유지…올해 성장률 6.5% 전망"</b></p>
     
-
-
-    <video id="video1" playsinline autoplay muted></video>
-    <video id="video2" playsinline loop></video>
+    <div id="aaa">
+        <video id="video1" playsinline autoplay muted></video>
+        <video id="video2" playsinline loop></video>
+    </div>
 
     <div>
         <button id="start">Start camera</button>
